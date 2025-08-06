@@ -1,0 +1,83 @@
+/* General page styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f4f8;
+  margin: 0;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Shared container/card */
+.container, .card {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Headings */
+h1, h2 {
+  color: #333333;
+}
+
+/* Forms */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 0.5rem;
+  color: #555555;
+  text-align: left;
+}
+
+input[type="text"],
+input[type="password"] {
+  padding: 0.6rem;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+/* Show password toggle */
+.show-password {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.show-password input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+/* Buttons */
+input[type="submit"],
+button {
+  padding: 0.6rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover,
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Status */
+.status {
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  color: #007bff;
+}

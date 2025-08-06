@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESP32 Wi-Fi Setup</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Configure Wi-Fi</h2>
+    <form action="/config" method="post">
+      <label for="ssid">SSID:</label>
+      <input type="text" id="ssid" name="ssid" required />
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required />
+
+      <div class="show-password">
+        <input type="checkbox" id="togglePassword" />
+        <label for="togglePassword">Show Password</label>
+      </div>
+
+      <input type="submit" value="Connect" />
+    </form>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    toggle.addEventListener('change', function () {
+      passwordInput.type = this.checked ? 'text' : 'password';
+    });
+  </script>
+</body>
+</html>

@@ -3,14 +3,10 @@
 #include "esp_wifi.h"
 #include "nvs_flash.h"
 #include "esp_netif.h"
-
+#include "nvs_utils.h"
 #include "wifi.h"
 
-#define WIFI_SSID      "ssid"
-#define WIFI_PASS      "password"
-
-
-static const char *TAG_WIFI = "wifi_station";
+static const char *TAG_WIFI = "wifi";
 
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                                int32_t event_id, void* event_data)
@@ -22,7 +18,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                 ESP_LOGI(TAG_WIFI, "Wi-Fi started, connecting...");
                 break;
             case WIFI_EVENT_STA_DISCONNECTED:
-                ESP_LOGI(TAG_WIFI, "Disconnected, trying to reconnect...");
+                ESP_LOGI(TAG_WIFI, "Disconnected, retrying...");
                 esp_wifi_connect();
                 break;
             default:
@@ -34,47 +30,63 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     }
 }
 
-void wifi_init_sta(void)
+void wifi_init_sta_mode(const char* ssid, const char* pass)
 {
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        nvs_flash_erase();
-        nvs_flash_init();
-    }
-
-    esp_netif_init(); // Initialize TCP/IP stack
+    esp_netif_init();
     esp_event_loop_create_default();
-
     esp_netif_create_default_wifi_sta();
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     esp_wifi_init(&cfg);
 
-    esp_event_handler_instance_t instance_any_id;
-    esp_event_handler_instance_t instance_got_ip;
+    wifi_config_t wifi_config = { 0 };
+    strncpy((char *)wifi_config.sta.ssid, ssid, sizeof(wifi_config.sta.ssid));
+    strncpy((char *)wifi_config.sta.password, pass, sizeof(wifi_config.sta.password));
 
-    esp_event_handler_instance_register(WIFI_EVENT,
-                                        ESP_EVENT_ANY_ID,
-                                        &wifi_event_handler,
-                                        NULL,
-                                        &instance_any_id);
-    esp_event_handler_instance_register(IP_EVENT,
-                                        IP_EVENT_STA_GOT_IP,
-                                        &wifi_event_handler,
-                                        NULL,
-                                        &instance_got_ip);
-
-    wifi_config_t wifi_config = {
-        .sta = {
-            .ssid = WIFI_SSID,
-            .password = WIFI_PASS,
-            // Other options, e.g., .threshold.authmode = WIFI_AUTH_WPA2_PSK,
-        },
-    };
+    esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL);
+    esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL);
 
     esp_wifi_set_mode(WIFI_MODE_STA);
     esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config);
     esp_wifi_start();
 
-    ESP_LOGI(TAG_WIFI, "wifi_init_sta finished.");
+    ESP_LOGI(TAG_WIFI, "Wi-Fi STA mode started");
+}
+
+void wifi_init_softap_mode(void)
+{
+    esp_netif_init();
+    esp_event_loop_create_default();
+    esp_netif_create_default_wifi_ap();
+
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    esp_wifi_init(&cfg);
+
+    wifi_config_t ap_config = {
+        .ap = {
+            .ssid = "ESP32-Setup",
+            .ssid_len = strlen("ESP32-Setup"),
+            .channel = 1,
+            .max_connection = 4,
+            .authmode = WIFI_AUTH_OPEN,
+        }
+    };
+
+    esp_wifi_set_mode(WIFI_MODE_AP);
+    esp_wifi_set_config(ESP_IF_WIFI_AP, &ap_config);
+    esp_wifi_start();
+
+    ESP_LOGI(TAG_WIFI, "SoftAP started, SSID: ESP32-Setup");
+}
+
+void wifi_auto_init(void)
+{
+    char ssid[32], pass[64];
+    if (nvs_read_wifi_credentials(ssid, pass)) {
+        ESP_LOGI(TAG_WIFI, "Found saved Wi-Fi credentials: SSID=%s, password=%s", ssid, pass);
+        wifi_init_sta_mode(ssid, pass);
+    } else {
+        ESP_LOGI(TAG_WIFI, "No saved Wi-Fi credentials found. Starting AP mode.");
+        wifi_init_softap_mode();
+    }
 }
