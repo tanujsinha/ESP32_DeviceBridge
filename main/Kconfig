@@ -1,0 +1,15 @@
+menu "Application Configuration"
+
+config APP_WIFI_SUPPORT
+    bool "Enable Wi-Fi Support"
+    default y
+
+config APP_WEB_UI_SUPPORT
+    bool "Enable Web UI Support"
+    default y
+
+config APP_ZIGBEE_SUPPORT
+    bool "Enable Zigbee Support"
+    default n
+
+endmenu
