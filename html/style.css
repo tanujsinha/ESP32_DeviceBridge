@@ -1,4 +1,3 @@
-/* General page styling */
 body {
   font-family: Arial, sans-serif;
   background-color: #f0f4f8;
@@ -10,8 +9,7 @@ body {
   min-height: 100vh;
 }
 
-/* Shared container/card */
-.container, .card {
+.card {
   background-color: #ffffff;
   padding: 2rem;
   border-radius: 12px;
@@ -21,15 +19,15 @@ body {
   text-align: center;
 }
 
-/* Headings */
 h1, h2 {
   color: #333333;
+  cursor: pointer;
 }
 
-/* Forms */
 form {
   display: flex;
   flex-direction: column;
+  margin-bottom: 1.5rem;
 }
 
 label {
@@ -39,7 +37,8 @@ label {
 }
 
 input[type="text"],
-input[type="password"] {
+input[type="password"],
+select {
   padding: 0.6rem;
   border: 1px solid #cccccc;
   border-radius: 8px;
@@ -47,17 +46,16 @@ input[type="password"] {
   font-size: 1rem;
 }
 
-/* Show password toggle */
 .show-password {
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
 }
+
 .show-password input[type="checkbox"] {
   margin-right: 0.5rem;
 }
 
-/* Buttons */
 input[type="submit"],
 button {
   padding: 0.6rem 1rem;
@@ -75,9 +73,20 @@ button:hover {
   background-color: #0056b3;
 }
 
-/* Status */
 .status {
   font-size: 1.2rem;
   margin-top: 1rem;
   color: #007bff;
+}
+
+.section-content {
+  display: none;
+  margin-top: 1rem;
+}
+
+.message {
+  color: green;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  display: none;
 }
