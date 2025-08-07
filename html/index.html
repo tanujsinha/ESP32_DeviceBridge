@@ -3,145 +3,122 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ESP32 Device Configuration</title>
+  <title>Device Configuration</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <div class="card">
-    <h1>ESP32 Device Configuration</h1>
+    <h1>Device Configuration</h1>
 
-    <!-- Zigbee Section -->
-    <section>
-      <h2 onclick="toggleSection(this)">Zigbee</h2>
-      <div class="section-content">
-        <form onsubmit="handleForm(event, 'Zigbee')">
-          <label for="zigbeeChannel">Channel:</label>
-          <input type="text" id="zigbeeChannel" name="zigbeeChannel" placeholder="e.g. 15" />
+    <script>
+      const sections = [
+        {
+          id: 'zigbee',
+          label: 'Zigbee',
+          content: `
+            <label for="zigbeeChannel">Channel:</label>
+            <input type="text" id="zigbeeChannel" name="zigbeeChannel" placeholder="e.g. 15" />
 
-          <label for="zigbeePanId">PAN ID:</label>
-          <input type="text" id="zigbeePanId" name="zigbeePanId" placeholder="e.g. 0x1234" />
+            <label for="zigbeePanId">PAN ID:</label>
+            <input type="text" id="zigbeePanId" name="zigbeePanId" placeholder="e.g. 0x1234" />
 
-          <input type="submit" value="Save Zigbee Settings" />
-          <div class="message" id="msg-zigbee">Zigbee settings saved.</div>
-        </form>
-      </div>
-    </section>
+            <input type="submit" value="Save Zigbee Settings" />`
+        },
+        {
+          id: 'mqtt',
+          label: 'MQTT',
+          content: `
+            <label for="mqttBroker">Broker Address:</label>
+            <input type="text" id="mqttBroker" name="mqttBroker" placeholder="e.g. 192.168.1.100" />
 
-    <!-- MQTT Section -->
-    <section>
-      <h2 onclick="toggleSection(this)">MQTT</h2>
-      <div class="section-content">
-        <form onsubmit="handleForm(event, 'MQTT')">
-          <label for="mqttBroker">Broker Address:</label>
-          <input type="text" id="mqttBroker" name="mqttBroker" placeholder="e.g. 192.168.1.100" />
+            <label for="mqttPort">Port:</label>
+            <input type="text" id="mqttPort" name="mqttPort" placeholder="e.g. 1883" />
 
-          <label for="mqttPort">Port:</label>
-          <input type="text" id="mqttPort" name="mqttPort" placeholder="e.g. 1883" />
+            <label for="mqttUser">Username:</label>
+            <input type="text" id="mqttUser" name="mqttUser" />
 
-          <label for="mqttUser">Username:</label>
-          <input type="text" id="mqttUser" name="mqttUser" />
+            <label for="mqttPassword">Password:</label>
+            <input type="password" id="mqttPassword" name="mqttPassword" />
 
-          <label for="mqttPassword">Password:</label>
-          <input type="password" id="mqttPassword" name="mqttPassword" />
+            <input type="submit" value="Save MQTT Settings" />`
+        },
+        {
+          id: 'thread',
+          label: 'Thread',
+          content: `
+            <label for="threadNetworkName">Network Name:</label>
+            <input type="text" id="threadNetworkName" name="threadNetworkName" />
 
-          <div class="show-password">
-            <input type="checkbox" onclick="togglePassword('mqttPassword')">
-            <label>Show Password</label>
-          </div>
+            <label for="threadMasterKey">Master Key:</label>
+            <input type="text" id="threadMasterKey" name="threadMasterKey" placeholder="e.g. 001122334455..." />
 
-          <input type="submit" value="Save MQTT Settings" />
-          <div class="message" id="msg-mqtt">MQTT settings saved.</div>
-        </form>
-      </div>
-    </section>
+            <input type="submit" value="Save Thread Settings" />`
+        },
+        {
+          id: 'matter',
+          label: 'Matter',
+          content: `
+            <label for="matterDeviceName">Device Name:</label>
+            <input type="text" id="matterDeviceName" name="matterDeviceName" />
 
-    <!-- Thread Section -->
-    <section>
-      <h2 onclick="toggleSection(this)">Thread</h2>
-      <div class="section-content">
-        <form onsubmit="handleForm(event, 'Thread')">
-          <label for="threadNetworkName">Network Name:</label>
-          <input type="text" id="threadNetworkName" name="threadNetworkName" />
+            <label for="matterFabricId">Fabric ID:</label>
+            <input type="text" id="matterFabricId" name="matterFabricId" />
 
-          <label for="threadMasterKey">Master Key:</label>
-          <input type="text" id="threadMasterKey" name="threadMasterKey" placeholder="e.g. 001122334455..." />
+            <input type="submit" value="Save Matter Settings" />`
+        },
+        {
+          id: 'gpio',
+          label: 'GPIO Control',
+          content: `
+            <label for="gpioPin">GPIO Pin:</label>
+            <input type="text" id="gpioPin" name="gpioPin" placeholder="e.g. 5" />
 
-          <input type="submit" value="Save Thread Settings" />
-          <div class="message" id="msg-thread">Thread settings saved.</div>
-        </form>
-      </div>
-    </section>
+            <label for="gpioState">State:</label>
+            <select id="gpioState" name="gpioState">
+              <option value="on">ON</option>
+              <option value="off">OFF</option>
+            </select>
 
-    <!-- Matter Section -->
-    <section>
-      <h2 onclick="toggleSection(this)">Matter</h2>
-      <div class="section-content">
-        <form onsubmit="handleForm(event, 'Matter')">
-          <label for="matterDeviceName">Device Name:</label>
-          <input type="text" id="matterDeviceName" name="matterDeviceName" />
+            <input type="submit" value="Set GPIO" />`
+        }
+      ];
 
-          <label for="matterFabricId">Fabric ID:</label>
-          <input type="text" id="matterFabricId" name="matterFabricId" />
+      window.onload = function () {
+        const container = document.querySelector('.card');
+        sections.forEach(sec => {
+          const section = document.createElement('div');
+          section.className = 'section';
+          section.innerHTML = `
+            <h2 class="section-header">
+              <span>${sec.label}</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-${sec.id}" checked onchange="toggleEnable('${sec.id}')">
+                <span class="slider"></span>
+              </label>
+            </h2>
+            <div class="section-content" id="section-${sec.id}">
+              <form>
+                ${sec.content}
+              </form>
+            </div>
+          `;
+          container.appendChild(section);
+        });
 
-          <input type="submit" value="Save Matter Settings" />
-          <div class="message" id="msg-matter">Matter settings saved.</div>
-        </form>
-      </div>
-    </section>
+        // Initialize visibility
+        sections.forEach(sec => toggleEnable(sec.id));
+      };
 
-    <!-- GPIO Section -->
-    <section>
-      <h2 onclick="toggleSection(this)">GPIO Control</h2>
-      <div class="section-content">
-        <form onsubmit="handleForm(event, 'GPIO')">
-          <label for="gpioPin">GPIO Pin:</label>
-          <input type="text" id="gpioPin" name="gpioPin" placeholder="e.g. 5" />
-
-          <label for="gpioState">State:</label>
-          <select id="gpioState" name="gpioState">
-            <option value="on">ON</option>
-            <option value="off">OFF</option>
-          </select>
-
-          <input type="submit" value="Set GPIO" />
-          <div class="message" id="msg-gpio">GPIO command sent.</div>
-        </form>
-      </div>
-    </section>
+      function toggleEnable(id) {
+        const content = document.getElementById(`section-${id}`);
+        const toggle = document.getElementById(`toggle-${id}`);
+        if (toggle.checked) {
+          content.classList.remove('hidden');
+        } else {
+          content.classList.add('hidden');
+        }
+      }
+    </script>
   </div>
-
-<script>
-  function toggleSection(header) {
-    // Collapse all sections
-    const allContents = document.querySelectorAll('.section-content');
-    allContents.forEach(content => {
-      content.style.display = 'none';
-    });
-
-    // Toggle selected section (reopen if it was closed)
-    const selected = header.nextElementSibling;
-    if (selected.style.display !== 'block') {
-      selected.style.display = 'block';
-    }
-  }
-
-  function togglePassword(id) {
-    const input = document.getElementById(id);
-    input.type = input.type === "password" ? "text" : "password";
-  }
-
-  function handleForm(event, type) {
-    event.preventDefault();
-    const msg = document.getElementById(`msg-${type.toLowerCase()}`);
-    msg.style.display = "block";
-    setTimeout(() => { msg.style.display = "none"; }, 2000);
-
-    // Example backend call (commented out)
-    // fetch(`/api/${type.toLowerCase()}`, {
-    //   method: 'POST',
-    //   body: new FormData(event.target)
-    // });
-  }
-</script>
 </body>
 </html>
