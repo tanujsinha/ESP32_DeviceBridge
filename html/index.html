@@ -110,26 +110,38 @@
     </section>
   </div>
 
-  <script>
-    function toggleSection(header) {
-      const content = header.nextElementSibling;
-      content.style.display = content.style.display === "block" ? "none" : "block";
-    }
+<script>
+  function toggleSection(header) {
+    // Collapse all sections
+    const allContents = document.querySelectorAll('.section-content');
+    allContents.forEach(content => {
+      content.style.display = 'none';
+    });
 
-    function togglePassword(id) {
-      const input = document.getElementById(id);
-      input.type = input.type === "password" ? "text" : "password";
+    // Toggle selected section (reopen if it was closed)
+    const selected = header.nextElementSibling;
+    if (selected.style.display !== 'block') {
+      selected.style.display = 'block';
     }
+  }
 
-    function handleForm(event, type) {
-      event.preventDefault();
-      const msg = document.getElementById(`msg-${type.toLowerCase()}`);
-      msg.style.display = "block";
-      setTimeout(() => { msg.style.display = "none"; }, 2000);
+  function togglePassword(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+  }
 
-      // Here you could send form data via fetch() or XMLHttpRequest
-      // Example: fetch('/api/mqtt', { method: 'POST', body: new FormData(event.target) })
-    }
-  </script>
+  function handleForm(event, type) {
+    event.preventDefault();
+    const msg = document.getElementById(`msg-${type.toLowerCase()}`);
+    msg.style.display = "block";
+    setTimeout(() => { msg.style.display = "none"; }, 2000);
+
+    // Example backend call (commented out)
+    // fetch(`/api/${type.toLowerCase()}`, {
+    //   method: 'POST',
+    //   body: new FormData(event.target)
+    // });
+  }
+</script>
 </body>
 </html>
