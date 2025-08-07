@@ -14,79 +14,107 @@ body {
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
+  max-width: 500px;
   width: 100%;
+}
+
+h1 {
+  color: #333;
   text-align: center;
 }
 
-h1, h2 {
-  color: #333333;
+.section {
+  margin-bottom: 2rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #e0e7ff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+/* Justinmind toggle switch style */
+.toggle-switch {
+  position: relative;
+  width: 50px;
+  height: 28px;
+}
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
   cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 50px;
+  transition: background-color 0.3s ease;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+input:checked + .slider {
+  background-color: #4caf50;
+}
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+.section-content {
+  margin-top: 1rem;
+}
+
+.hidden {
+  display: none;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1.5rem;
 }
 
 label {
   margin-bottom: 0.5rem;
-  color: #555555;
-  text-align: left;
+  color: #555;
 }
 
 input[type="text"],
 input[type="password"],
 select {
   padding: 0.6rem;
-  border: 1px solid #cccccc;
+  border: 1px solid #ccc;
   border-radius: 8px;
   margin-bottom: 1rem;
   font-size: 1rem;
 }
 
-.show-password {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.show-password input[type="checkbox"] {
-  margin-right: 0.5rem;
-}
-
-input[type="submit"],
-button {
+input[type="submit"] {
   padding: 0.6rem 1rem;
-  background-color: #007bff;
+  background-color: #4caf50;       /* green like toggle ON */
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
 }
 
-input[type="submit"]:hover,
-button:hover {
-  background-color: #0056b3;
-}
-
-.status {
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  color: #007bff;
-}
-
-.section-content {
-  display: none;
-  margin-top: 1rem;
-}
-
-.message {
-  color: green;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  display: none;
+input[type="submit"]:hover {
+  background-color: #388e3c;       /* darker green on hover */
 }
