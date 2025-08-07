@@ -3,14 +3,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ESP32 Web Server</title>
+  <title>ESP32 Device Configuration</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <div class="card">
-    <h1>ESP32 Web Server</h1>
-    <p class="status">Device is online ✅</p>
-    <button onclick="alert('Button clicked!')">Click Me</button>
+    <h1>ESP32 Device Configuration</h1>
+
+    <!-- Zigbee Section -->
+    <section>
+      <h2 onclick="toggleSection(this)">Zigbee</h2>
+      <div class="section-content">
+        <form onsubmit="handleForm(event, 'Zigbee')">
+          <label for="zigbeeChannel">Channel:</label>
+          <input type="text" id="zigbeeChannel" name="zigbeeChannel" placeholder="e.g. 15" />
+
+          <label for="zigbeePanId">PAN ID:</label>
+          <input type="text" id="zigbeePanId" name="zigbeePanId" placeholder="e.g. 0x1234" />
+
+          <input type="submit" value="Save Zigbee Settings" />
+          <div class="message" id="msg-zigbee">Zigbee settings saved.</div>
+        </form>
+      </div>
+    </section>
+
+    <!-- MQTT Section -->
+    <section>
+      <h2 onclick="toggleSection(this)">MQTT</h2>
+      <div class="section-content">
+        <form onsubmit="handleForm(event, 'MQTT')">
+          <label for="mqttBroker">Broker Address:</label>
+          <input type="text" id="mqttBroker" name="mqttBroker" placeholder="e.g. 192.168.1.100" />
+
+          <label for="mqttPort">Port:</label>
+          <input type="text" id="mqttPort" name="mqttPort" placeholder="e.g. 1883" />
+
+          <label for="mqttUser">Username:</label>
+          <input type="text" id="mqttUser" name="mqttUser" />
+
+          <label for="mqttPassword">Password:</label>
+          <input type="password" id="mqttPassword" name="mqttPassword" />
+
+          <div class="show-password">
+            <input type="checkbox" onclick="togglePassword('mqttPassword')">
+            <label>Show Password</label>
+          </div>
+
+          <input type="submit" value="Save MQTT Settings" />
+          <div class="message" id="msg-mqtt">MQTT settings saved.</div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Thread Section -->
+    <section>
+      <h2 onclick="toggleSection(this)">Thread</h2>
+      <div class="section-content">
+        <form onsubmit="handleForm(event, 'Thread')">
+          <label for="threadNetworkName">Network Name:</label>
+          <input type="text" id="threadNetworkName" name="threadNetworkName" />
+
+          <label for="threadMasterKey">Master Key:</label>
+          <input type="text" id="threadMasterKey" name="threadMasterKey" placeholder="e.g. 001122334455..." />
+
+          <input type="submit" value="Save Thread Settings" />
+          <div class="message" id="msg-thread">Thread settings saved.</div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Matter Section -->
+    <section>
+      <h2 onclick="toggleSection(this)">Matter</h2>
+      <div class="section-content">
+        <form onsubmit="handleForm(event, 'Matter')">
+          <label for="matterDeviceName">Device Name:</label>
+          <input type="text" id="matterDeviceName" name="matterDeviceName" />
+
+          <label for="matterFabricId">Fabric ID:</label>
+          <input type="text" id="matterFabricId" name="matterFabricId" />
+
+          <input type="submit" value="Save Matter Settings" />
+          <div class="message" id="msg-matter">Matter settings saved.</div>
+        </form>
+      </div>
+    </section>
+
+    <!-- GPIO Section -->
+    <section>
+      <h2 onclick="toggleSection(this)">GPIO Control</h2>
+      <div class="section-content">
+        <form onsubmit="handleForm(event, 'GPIO')">
+          <label for="gpioPin">GPIO Pin:</label>
+          <input type="text" id="gpioPin" name="gpioPin" placeholder="e.g. 5" />
+
+          <label for="gpioState">State:</label>
+          <select id="gpioState" name="gpioState">
+            <option value="on">ON</option>
+            <option value="off">OFF</option>
+          </select>
+
+          <input type="submit" value="Set GPIO" />
+          <div class="message" id="msg-gpio">GPIO command sent.</div>
+        </form>
+      </div>
+    </section>
   </div>
+
+  <script>
+    function toggleSection(header) {
+      const content = header.nextElementSibling;
+      content.style.display = content.style.display === "block" ? "none" : "block";
+    }
+
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === "password" ? "text" : "password";
+    }
+
+    function handleForm(event, type) {
+      event.preventDefault();
+      const msg = document.getElementById(`msg-${type.toLowerCase()}`);
+      msg.style.display = "block";
+      setTimeout(() => { msg.style.display = "none"; }, 2000);
+
+      // Here you could send form data via fetch() or XMLHttpRequest
+      // Example: fetch('/api/mqtt', { method: 'POST', body: new FormData(event.target) })
+    }
+  </script>
 </body>
 </html>
