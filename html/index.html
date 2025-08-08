@@ -3,14 +3,122 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ESP32 Web Server</title>
+  <title>Device Configuration</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <div class="card">
-    <h1>ESP32 Web Server</h1>
-    <p class="status">Device is online ✅</p>
-    <button onclick="alert('Button clicked!')">Click Me</button>
+    <h1>Device Configuration</h1>
+
+    <script>
+      const sections = [
+        {
+          id: 'zigbee',
+          label: 'Zigbee',
+          content: `
+            <label for="zigbeeChannel">Channel:</label>
+            <input type="text" id="zigbeeChannel" name="zigbeeChannel" placeholder="e.g. 15" />
+
+            <label for="zigbeePanId">PAN ID:</label>
+            <input type="text" id="zigbeePanId" name="zigbeePanId" placeholder="e.g. 0x1234" />
+
+            <input type="submit" value="Save Zigbee Settings" />`
+        },
+        {
+          id: 'mqtt',
+          label: 'MQTT',
+          content: `
+            <label for="mqttBroker">Broker Address:</label>
+            <input type="text" id="mqttBroker" name="mqttBroker" placeholder="e.g. 192.168.1.100" />
+
+            <label for="mqttPort">Port:</label>
+            <input type="text" id="mqttPort" name="mqttPort" placeholder="e.g. 1883" />
+
+            <label for="mqttUser">Username:</label>
+            <input type="text" id="mqttUser" name="mqttUser" />
+
+            <label for="mqttPassword">Password:</label>
+            <input type="password" id="mqttPassword" name="mqttPassword" />
+
+            <input type="submit" value="Save MQTT Settings" />`
+        },
+        {
+          id: 'thread',
+          label: 'Thread',
+          content: `
+            <label for="threadNetworkName">Network Name:</label>
+            <input type="text" id="threadNetworkName" name="threadNetworkName" />
+
+            <label for="threadMasterKey">Master Key:</label>
+            <input type="text" id="threadMasterKey" name="threadMasterKey" placeholder="e.g. 001122334455..." />
+
+            <input type="submit" value="Save Thread Settings" />`
+        },
+        {
+          id: 'matter',
+          label: 'Matter',
+          content: `
+            <label for="matterDeviceName">Device Name:</label>
+            <input type="text" id="matterDeviceName" name="matterDeviceName" />
+
+            <label for="matterFabricId">Fabric ID:</label>
+            <input type="text" id="matterFabricId" name="matterFabricId" />
+
+            <input type="submit" value="Save Matter Settings" />`
+        },
+        {
+          id: 'gpio',
+          label: 'GPIO Control',
+          content: `
+            <label for="gpioPin">GPIO Pin:</label>
+            <input type="text" id="gpioPin" name="gpioPin" placeholder="e.g. 5" />
+
+            <label for="gpioState">State:</label>
+            <select id="gpioState" name="gpioState">
+              <option value="on">ON</option>
+              <option value="off">OFF</option>
+            </select>
+
+            <input type="submit" value="Set GPIO" />`
+        }
+      ];
+
+      window.onload = function () {
+        const container = document.querySelector('.card');
+        sections.forEach(sec => {
+          const section = document.createElement('div');
+          section.className = 'section';
+          section.innerHTML = `
+            <h2 class="section-header">
+              <span>${sec.label}</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-${sec.id}" checked onchange="toggleEnable('${sec.id}')">
+                <span class="slider"></span>
+              </label>
+            </h2>
+            <div class="section-content" id="section-${sec.id}">
+              <form>
+                ${sec.content}
+              </form>
+            </div>
+          `;
+          container.appendChild(section);
+        });
+
+        // Initialize visibility
+        sections.forEach(sec => toggleEnable(sec.id));
+      };
+
+      function toggleEnable(id) {
+        const content = document.getElementById(`section-${id}`);
+        const toggle = document.getElementById(`toggle-${id}`);
+        if (toggle.checked) {
+          content.classList.remove('hidden');
+        } else {
+          content.classList.add('hidden');
+        }
+      }
+    </script>
   </div>
 </body>
 </html>
