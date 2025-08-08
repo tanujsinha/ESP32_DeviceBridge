@@ -9,4 +9,8 @@ idf_component_register(SRCS
         "../html/style.css"
         "../html/index.html"
         "../html/wifi_config.html"
+    REQUIRES
+        "esp_matter"
+        "esp-zigbee-lib"
+        "esp_http_server"
 )
